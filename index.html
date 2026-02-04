@@ -27,37 +27,49 @@
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             z-index: 10;
-            max-width: 90%;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid white;
         }
 
-        h1 { margin-bottom: 1.5rem; }
+        .for-name {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+
+        h1 { margin-bottom: 1.5rem; font-size: 2rem; }
 
         .btn-group {
             display: flex;
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         button {
             background-color: var(--btn-bg);
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 30px;
             font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
         }
 
         button:hover {
             background-color: var(--btn-hover);
-            transform: scale(1.1);
+            transform: translateY(-3px) scale(1.05);
         }
 
         .floating {
@@ -66,34 +78,35 @@
             animation: float 15s infinite linear;
             opacity: 0.6;
             z-index: 1;
+            user-select: none;
         }
 
         @keyframes float {
-            0% { transform: translateY(100vh) translateX(0); }
+            0% { transform: translateY(110vh) translateX(0); }
             100% { transform: translateY(-10vh) translateX(50px); }
         }
 
-        #love-meter { width: 100%; margin: 20px 0; }
+        #love-meter { width: 100%; margin: 20px 0; accent-color: var(--btn-bg); }
         .hidden { display: none; }
+        #secret-msg { min-height: 1.5em; margin-top: 15px; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <div id="setup" class="hidden">
-        <span id="vName">Sofia</span>
-    </div>
-
     <div class="container" id="card">
+        <div class="for-name">For Sofia 💝</div>
+        
         <h1 id="question-text">Do you like me?</h1>
+        
         <div class="btn-group" id="buttons">
             <button onclick="nextStep(1)" id="yesBtn">Yes</button>
             <button onclick="moveNo()" id="noBtn">No</button>
         </div>
-        <p id="secret-msg" style="margin-top:15px; font-weight:bold;"></p>
+        
+        <p id="secret-msg"></p>
     </div>
 
     <script>
-        let currentStep = 1;
         const config = {
             valentineName: "Sofia",
             questions: {
@@ -101,54 +114,62 @@
                 second: { text: "How much do you love me?", start: "This much!" },
                 third: { text: "Will you be my Valentine...?", yes: "Yes!", no: "No" }
             },
-            celebration: { title: "Yay! I'm the luckiest person...", msg: "Now come get your gift... 🎁💖" }
+            celebration: { 
+                title: "Yay! I'm the luckiest person...", 
+                msg: "I love you, Sofia! Now come get your gift..." 
+            }
         };
 
         // Create background emojis
         const emojis = ['❤️', '💖', '💝', '💗', '💓', '🧸', '🐻'];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 25; i++) {
             let div = document.createElement('div');
             div.className = 'floating';
             div.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
             div.style.left = Math.random() * 100 + "vw";
-            div.style.animationDelay = Math.random() * 10 + "s";
+            div.style.animationDelay = Math.random() * 15 + "s";
+            div.style.fontSize = (Math.random() * 20 + 20) + "px";
             document.body.appendChild(div);
         }
 
         function nextStep(step) {
             if (step === 1) {
                 document.getElementById('secret-msg').innerText = config.questions.first.secret;
+                // Transition to second question
                 setTimeout(() => {
                     document.getElementById('question-text').innerText = config.questions.second.text;
                     document.getElementById('secret-msg').innerText = "";
                     document.getElementById('buttons').innerHTML = `
+                        <div style="width:100%">${config.questions.second.start}</div>
                         <input type="range" id="love-meter" min="1" max="10000" value="100">
-                        <br><button onclick="nextStep(2)">Next ❤️</button>
+                        <button onclick="nextStep(2)">Next ❤️</button>
                     `;
-                }, 2000);
+                }, 2500);
             } else if (step === 2) {
                 document.getElementById('question-text').innerText = config.questions.third.text;
                 document.getElementById('buttons').innerHTML = `
                     <button onclick="celebrate()">Yes!</button>
-                    <button onmouseover="moveNo(this)">No</button>
+                    <button id="noBtnRun" onmouseover="moveNo(this)" onclick="moveNo(this)">No</button>
                 `;
             }
         }
 
         function moveNo(btn) {
-            if(!btn) btn = document.getElementById('noBtn');
-            btn.style.position = 'absolute';
-            btn.style.top = Math.random() * 80 + 'vh';
-            btn.style.left = Math.random() * 80 + 'vw';
+            const b = btn || document.getElementById('noBtnRun') || document.getElementById('noBtn');
+            b.style.position = 'fixed';
+            b.style.top = Math.random() * 70 + 15 + 'vh';
+            b.style.left = Math.random() * 70 + 15 + 'vw';
         }
 
         function celebrate() {
             document.getElementById('card').innerHTML = `
+                <div class="for-name">Sofia 💝</div>
                 <h1>${config.celebration.title}</h1>
                 <p>${config.celebration.msg}</p>
-                <div style="font-size:3rem">🎁💖🤗💝💋❤️💕</div>
+                <div style="font-size:3.5rem; margin-top:20px;">🎁💖🤗💝💋❤️💕</div>
             `;
         }
     </script>
 </body>
 </html>
+ 
