@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💝</title>
+    <style>
+        :root {
+            --bg-start: #ffafbd;
+            --bg-end: #ffc3a0;
+            --btn-bg: #ff6b6b;
+            --btn-hover: #ff8787;
+            --text-color: #ff4757;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 10;
+            max-width: 90%;
+        }
+
+        h1 { margin-bottom: 1.5rem; }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--btn-hover);
+            transform: scale(1.1);
+        }
+
+        .floating {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: float 15s infinite linear;
+            opacity: 0.6;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-10vh) translateX(50px); }
+        }
+
+        #love-meter { width: 100%; margin: 20px 0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="setup" class="hidden">
+        <span id="vName">Sofia</span>
+    </div>
+
+    <div class="container" id="card">
+        <h1 id="question-text">Do you like me?</h1>
+        <div class="btn-group" id="buttons">
+            <button onclick="nextStep(1)" id="yesBtn">Yes</button>
+            <button onclick="moveNo()" id="noBtn">No</button>
+        </div>
+        <p id="secret-msg" style="margin-top:15px; font-weight:bold;"></p>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const config = {
+            valentineName: "Sofia",
+            questions: {
+                first: { text: "Do you like me?", secret: "I don't like you, I love you! ❤️" },
+                second: { text: "How much do you love me?", start: "This much!" },
+                third: { text: "Will you be my Valentine...?", yes: "Yes!", no: "No" }
+            },
+            celebration: { title: "Yay! I'm the luckiest person...", msg: "Now come get your gift... 🎁💖" }
+        };
+
+        // Create background emojis
+        const emojis = ['❤️', '💖', '💝', '💗', '💓', '🧸', '🐻'];
+        for (let i = 0; i < 20; i++) {
+            let div = document.createElement('div');
+            div.className = 'floating';
+            div.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            div.style.left = Math.random() * 100 + "vw";
+            div.style.animationDelay = Math.random() * 10 + "s";
+            document.body.appendChild(div);
+        }
+
+        function nextStep(step) {
+            if (step === 1) {
+                document.getElementById('secret-msg').innerText = config.questions.first.secret;
+                setTimeout(() => {
+                    document.getElementById('question-text').innerText = config.questions.second.text;
+                    document.getElementById('secret-msg').innerText = "";
+                    document.getElementById('buttons').innerHTML = `
+                        <input type="range" id="love-meter" min="1" max="10000" value="100">
+                        <br><button onclick="nextStep(2)">Next ❤️</button>
+                    `;
+                }, 2000);
+            } else if (step === 2) {
+                document.getElementById('question-text').innerText = config.questions.third.text;
+                document.getElementById('buttons').innerHTML = `
+                    <button onclick="celebrate()">Yes!</button>
+                    <button onmouseover="moveNo(this)">No</button>
+                `;
+            }
+        }
+
+        function moveNo(btn) {
+            if(!btn) btn = document.getElementById('noBtn');
+            btn.style.position = 'absolute';
+            btn.style.top = Math.random() * 80 + 'vh';
+            btn.style.left = Math.random() * 80 + 'vw';
+        }
+
+        function celebrate() {
+            document.getElementById('card').innerHTML = `
+                <h1>${config.celebration.title}</h1>
+                <p>${config.celebration.msg}</p>
+                <div style="font-size:3rem">🎁💖🤗💝💋❤️💕</div>
+            `;
+        }
+    </script>
+</body>
+</html>
